@@ -1,10 +1,6 @@
 library dy_request;
 
-import 'package:dy_request/dio_util.dart';
-
 export 'package:dy_request/dio_util.dart';
-
-
 
 /// A Calculator.
 class Calculator {

@@ -13,7 +13,7 @@ import 'package:dio/dio.dart';
 class DioUtil {
   final String httpURL = 'http://122.112.142.159/api'; //线上数据库
 
-  // final String httpURL = 'http://49.235.104.80:8088/api';//测试数据库
+  // final String httpURL2 = 'http://49.235.104.80:8088/api';//测试数据库
 
   static DioUtil _instance;
 
@@ -23,7 +23,7 @@ class DioUtil {
 
   int _connectTimeout = 7000;
 
-  int _receiveTimeout = 12000;
+  int _receiveTimeout = 7000;
 
   RequestData _requestData;
 
@@ -31,6 +31,7 @@ class DioUtil {
 
   factory DioUtil.instance() {
     if (_instance == null) {
+      print('instance');
       _instance = new DioUtil().._init();
     }
     return _instance;
@@ -38,6 +39,7 @@ class DioUtil {
 
   void _init() {
     if (_dio == null) {
+      print('_init');
       _dio = Dio();
       _dio.options = BaseOptions(
         method: "post",
@@ -48,47 +50,57 @@ class DioUtil {
     }
   }
 
-  void post(String s, dynamic data,
-      {Function responseData, Function notData, Function errorMSG}) async {
+  void post(String s, dynamic data, {Function responseData}) async {
     _setRequestData(s, data, errorMSG: (msg) {
       print(msg);
     });
     Response<dynamic> response;
     try {
-      response = await _dio.post(_requestData.url,
-          data: _requestData.body, options: _requestData.options);
+      response = await _dio.post(
+        _requestData.url,
+        data: _requestData.body,
+        options: _requestData.options,
+        
+      );
     } catch (e) {
       return;
     }
-    if (response.statusCode == HttpStatus.OK) {
+    if (response?.statusCode == HttpStatus.OK) {
       Map data = response.data;
       if (data['code'] == 0) {
-        if (data['data'] != null) {
-          responseData(data['data']);
-        } else {
-          notData(true);
-        }
+        responseData(data['data']);
       } else {
-        if (data['code'] >= 600) {
-          errorMSG(data['msg']);
-        } else {
-          notData(false);
-        }
+        error(data);
       }
-    } else {
-      notData(false);
+      return;
     }
   }
 
-
+  void error(Map data) {
+    if (data['code'] >= 600) {
+      print(data['msg']);
+    } else {
+      print(data['code']);
+    }
+  }
 
   void _setRequestData(String s, dynamic data, {Function errorMSG}) {
     if (token != '') {
-      var json = data is Map ? jsonEncode(data) : data;
-      Map<String, dynamic> body = (data == null
-          ? {'s': s, 'k': token}
-          : {'s': s, 'p': '$json', 'k': token});
-      Map requestData = {'url': httpURL, 'body': body};
+      Map requestData;
+      if (data is Map<String,File>) {
+        FormData formData = new FormData();
+        data.forEach((key,file){
+          formData.add(key, new UploadFileInfo(file,"$key.png"));
+        });
+        formData.add('s', s);
+        requestData = {'url': httpURL, 'body': formData};
+      }else{
+        var json = data is Map ? jsonEncode(data) : data;
+        Map<String, dynamic> body = (data == null
+            ? {'s': s, 'k': token}
+            : {'s': s, 'p': '$json', 'k': token});
+        requestData = {'url': httpURL, 'body': body};
+      }
       _requestData = RequestData.fromMap(requestData);
     } else {
       errorMSG('token不能为空');
@@ -104,6 +116,9 @@ class RequestData {
   RequestData({this.url, this.body, this.options});
   factory RequestData.fromMap(Map data) {
     return RequestData(
-        url: data['url'], body: data['body'], options: data['options']);
+      url: data['url'],
+      body: data['body'],
+      options: data['options'],
+    );
   }
 }
