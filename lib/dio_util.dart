@@ -8,18 +8,31 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
+import 'package:dy_request/overlay/dio_show.dart';
+import 'package:file_model/file_util.dart';
+import 'package:flutter/cupertino.dart';
+
+import 'log_util.dart';
 
 class DioUtil {
-  final String httpURL = 'http://122.112.142.159/api'; //线上数据库
 
-  // final String httpURL2 = 'http://49.235.104.80:8088/api';//测试数据库
+//  final String httpURL = 'http://122.112.142.159/api'; //线上数据库
 
+  final String httpURL = 'http://49.235.104.80:8088/api';//测试数据库
+
+  /// 实例类
   static DioUtil _instance;
 
+  /// 登录后的token
   static String token = '';
 
+  /// 保存网络状态ConnectivityResult result 
+  static ConnectivityResult result;
+
   Dio _dio;
+
 
   int _connectTimeout = 7000;
 
@@ -30,6 +43,8 @@ class DioUtil {
   DioUtil();
 
   factory DioUtil.instance() {
+    ///请将当前项目路径/Users/ironman/Documents/flutter/package/更改为你自己电脑的项目路径 ps:注意models/后面加/
+    FileUtil.filePath = r"/Users/ironman/Documents/flutter/package/dy_request/lib/models/";
     if (_instance == null) {
       print('instance');
       _instance = new DioUtil().._init();
@@ -50,42 +65,90 @@ class DioUtil {
     }
   }
 
-  void post(String s, dynamic data, {Function responseData}) async {
-    _setRequestData(s, data, errorMSG: (msg) {
-      print(msg);
-    });
+
+  Future<dynamic> post(String s, dynamic data) async {
+    
+    /// 检查网络
+    if (result == null || result == ConnectivityResult.none) {
+      if (result == null) {
+        new Future.delayed(const Duration(milliseconds: 0), () => DioShow.prompt('请监听网络住状态'));
+      }else{
+        new Future.delayed(const Duration(milliseconds: 0), () => DioShow.prompt('请检查网络'));
+      }
+      return null;
+    }
+    
+    new Future.delayed(const Duration(milliseconds: 0), () => DioShow.show('加载中...'));
+
+    _setRequestData(s, data);
+      
     Response<dynamic> response;
     try {
       response = await _dio.post(
         _requestData.url,
         data: _requestData.body,
         options: _requestData.options,
-        
-      );
+      ).catchError((onError){
+        LogUtil().out(onError);
+        DioShow.dismiss();
+        return null;
+      });
     } catch (e) {
-      return;
+      LogUtil().out(e);
+      DioShow.dismiss();
+      return null;
     }
-    if (response?.statusCode == HttpStatus.OK) {
+    DioShow.dismiss();
+    if (response?.statusCode == 200){
       Map data = response.data;
-      if (data['code'] == 0) {
-        responseData(data['data']);
-      } else {
-        error(data);
+      LogUtil().out(data);
+      if (data['code']==0) {
+        DioShow.successful('加载完成');
+        if (data['data']!=null) {
+          if (data['data'] is Map ) {
+            FileUtil.fromFileName(s).writeAsMap(data['data']);
+          }
+          return data['data'];
+        } else {
+          return true;
+        }
+      }else{
+        if(data['code']>=600){
+          DioShow.prompt(data['msg']);
+          if (data['msg'] == '登录过期！') {
+            token = '';
+            // clear();
+            // StaticValue.token = '';
+            // new RootNotification(rootState: RootState.login).dispatch(StaticValue.context);
+          }
+        }
+        return null;
       }
-      return;
+    }else{
+      DioShow.error('网络错误');
+      return null;
     }
   }
 
   void error(Map data) {
     if (data['code'] >= 600) {
-      print(data['msg']);
+      LogUtil().out(data['msg']);
     } else {
-      print(data['code']);
+      LogUtil().out(data['code']);
     }
   }
 
-  void _setRequestData(String s, dynamic data, {Function errorMSG}) {
-    if (token != '') {
+  void _setRequestData(String s, dynamic data) {
+    
+    if (data is Map && data.length>5) {
+
+      FileUtil.fromFileName('deliverService.insert').writeAsMap(data);
+    }
+    
+
+    if (token == '' && !(s=='accountService.login' || s=='accountService.sendVevifyCode')) {
+      LogUtil().out('token不能为空');
+    } else {
       Map requestData;
       if (data is Map<String,File>) {
         FormData formData = new FormData();
@@ -102,11 +165,11 @@ class DioUtil {
         requestData = {'url': httpURL, 'body': body};
       }
       _requestData = RequestData.fromMap(requestData);
-    } else {
-      errorMSG('token不能为空');
+      LogUtil().out(_requestData.body);
     }
   }
 }
+
 
 class RequestData {
   final String url;
@@ -119,6 +182,22 @@ class RequestData {
       url: data['url'],
       body: data['body'],
       options: data['options'],
+    );
+  }
+}
+
+class ResponseData {
+  final String msg;
+  final int code;
+  final Map data;
+
+  ResponseData({this.msg = '', this.code = 0, this.data});
+
+  factory ResponseData.fromMap(Map data) {
+    return ResponseData(
+      msg: data['msg']==null?'':data['msg'],
+      code: data['code'],
+      data: data['data'],
     );
   }
 }

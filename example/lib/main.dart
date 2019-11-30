@@ -1,3 +1,6 @@
+//import 'package:example/model/accountService_selectOwnerDeliverList_list_model.dart';
+//import 'package:example/model/accountService_selectOwnerDeliverList_model.dart';
+import 'package:file_model/file_model.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dy_request/dy_request.dart';
@@ -45,10 +48,45 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState<T> extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter()  {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    DioUtil.result = ConnectivityResult.wifi;
+
+    OverlayCreate.context = context;
+
+    login();
+  }
+
+  void login() {
+    Map data = {
+      "mobile": "15179861454",
+      "verifyCode": "888888",
+      "userType": 2,
+      "deviceToken": "",
+      "deviceType": 1 //设备 1:iOS  2:Android
+    };
+
+    apiASLogin(data);
+  }
+
+  void getList() {
+    apiDSSelectOwnerDeliverList().then((list) {
+      for (var model in list) {
+        print(model.deliverId);
+      }
+    });
+  }
+
+
+  List<Widget> viewList = [];
+
+  void _incrementCounter() async {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -56,9 +94,6 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
-      DioUtil.token = 'asdasdasdasdasdas';
-      DioUtil.instance().post('', 'p', responseData: (data){print(data);});
-      
     });
   }
 
@@ -79,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
+        child: ListView(
           // Column is also a layout widget. It takes a list of children and
           // arranges them vertically. By default, it sizes itself to fit its
           // children horizontally, and tries to be as tall as its parent.
@@ -94,15 +129,14 @@ class _MyHomePageState extends State<MyHomePage> {
           // center the children vertically; the main axis here is the vertical
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
+            getView('发送验证码',action: () => apiASSendVevifyCode({'mobile':'15179861454', 'userType':2})),
+            getView('登录',action: () => login()),
+            getView('货主根据条件查看订单',action: () => apiDSSelectOwnerDeliverList()),
+            getView('获取常用发货位置',action: () => apiOASSelectList()),
+            getView('发货',action: () => apiASInsert()),
+            getView('双乾收货',action: () => apiDSTakeDelivery2()),
           ],
         ),
       ),
@@ -111,6 +145,20 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  Widget getView(String text,{Function action}){
+    return new GestureDetector(
+      onTap: action,
+      child: new Container(
+        margin: EdgeInsets.all(5),
+        padding: EdgeInsets.all(10),
+        color: Colors.green,
+        child: new Center(
+          child: new Text(text),
+        ),
+      ),
     );
   }
 }
