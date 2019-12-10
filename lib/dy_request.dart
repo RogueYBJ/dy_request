@@ -7,18 +7,20 @@
 
 library dy_request;
 
+import 'package:dy_request/dio_assets.dart';
 import 'package:dy_request/dio_util.dart';
-import 'package:dy_request/models/deliverService_insert_model.dart';
-import 'package:file_model/file_util.dart';
+import 'models/model_header.dart';
 
-import 'models/deliverService_selectOwnerDeliverList_list_model.dart';
-import 'models/deliverService_selectOwnerDeliverList_model.dart';
-
-export 'package:dy_request/models/deliverService_selectOwnerDeliverList_list_model.dart';
-export 'package:dy_request/models/deliverService_selectOwnerDeliverList_model.dart';
 export 'overlay/overlay_create.dart';
-export 'package:dy_request/dio_util.dart';
 export 'package:connectivity/connectivity.dart';
+
+export 'notification.dart';
+export 'log_util.dart';
+export 'dio_dialog.dart';
+export 'dio_assets.dart';
+export 'dio_util.dart';
+export 'overlay/dio_show.dart';
+export 'models/model_header.dart';
 
 /// A Calculator.
 class Calculator {
@@ -34,7 +36,10 @@ class DYRequest {}
 Future<String> apiASLogin(Map data) {
   if (DioUtil.token != '') return null;
   return DioUtil.instance().post('accountService.login', data).then((token) {
-    if (token != null) DioUtil.token = token;
+    if (token != null) {
+      DioUtil.token = token;
+      setAssetsToken(token);
+    }
     return null;
   });
 }

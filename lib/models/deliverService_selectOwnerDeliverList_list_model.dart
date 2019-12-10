@@ -1,6 +1,6 @@
 /*
  * Author: Bangjin Yu
- * CreateTime: 2019-11-30 19:53:35.411483
+ * CreateTime: 2019-12-10 21:06:30.972148
  * Email: 1227169416@qq.com
  * Address: 梦想小镇互联网村
  */
@@ -29,6 +29,9 @@ class DeliverServiceSelectOwnerDeliverListListModel {
 	DeliverServiceSelectOwnerDeliverListListModel({this.deliverId = 0,this.deliverNo = '',this.driverName = '',this.goodsName = '',this.goodsType = '',this.goodsTypeName = '',this.isWhite = 0,this.loadTime = 0,this.ownerId = 0,this.remark = '',this.srcAddr = '',this.srcCityName = '',this.srcDistrictName = '',this.srcLatitude = 0.0,this.srcLongitude = 0.0,this.status = 0,this.targetAddr = '',this.targetCityName = '',this.targetDistrictName = '',this.transAmount = 0.0,this.weight = 0,});
 	factory DeliverServiceSelectOwnerDeliverListListModel.fromMap(Map data) {
 		return DeliverServiceSelectOwnerDeliverListListModel(deliverId:data['deliverId'],deliverNo:data['deliverNo'],driverName:data['driverName'],goodsName:data['goodsName'],goodsType:data['goodsType'],goodsTypeName:data['goodsTypeName'],isWhite:data['isWhite'],loadTime:data['loadTime'],ownerId:data['ownerId'],remark:data['remark'],srcAddr:data['srcAddr'],srcCityName:data['srcCityName'],srcDistrictName:data['srcDistrictName'],srcLatitude:data['srcLatitude'],srcLongitude:data['srcLongitude'],status:data['status'],targetAddr:data['targetAddr'],targetCityName:data['targetCityName'],targetDistrictName:data['targetDistrictName'],transAmount:data['transAmount'],weight:data['weight'],);
+	}
+	Map toMap(){
+		return {'deliverId':deliverId,'deliverNo':deliverNo,'driverName':driverName,'goodsName':goodsName,'goodsType':goodsType,'goodsTypeName':goodsTypeName,'isWhite':isWhite,'loadTime':loadTime,'ownerId':ownerId,'remark':remark,'srcAddr':srcAddr,'srcCityName':srcCityName,'srcDistrictName':srcDistrictName,'srcLatitude':srcLatitude,'srcLongitude':srcLongitude,'status':status,'targetAddr':targetAddr,'targetCityName':targetCityName,'targetDistrictName':targetDistrictName,'transAmount':transAmount,'weight':weight,};
 	}
 
 }

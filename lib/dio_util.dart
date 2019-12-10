@@ -14,9 +14,13 @@ import 'package:dy_request/overlay/dio_show.dart';
 import 'package:file_model/file_util.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'dio_assets.dart';
 import 'log_util.dart';
+import 'notification.dart';
 
 class DioUtil {
+
+  static BuildContext mianStateContext;
 
 //  final String httpURL = 'http://122.112.142.159/api'; //线上数据库
 
@@ -66,21 +70,33 @@ class DioUtil {
   }
 
 
-  Future<dynamic> post(String s, dynamic data) async {
+  Future<dynamic> post(String s, dynamic data,{bool isShow = false ,String msg = '加载中...',bool isModel = false}) async {
     
     /// 检查网络
     if (result == null || result == ConnectivityResult.none) {
       if (result == null) {
-        new Future.delayed(const Duration(milliseconds: 0), () => DioShow.prompt('请监听网络住状态'));
+        DioShow.prompt('请监听网络住状态');
       }else{
-        new Future.delayed(const Duration(milliseconds: 0), () => DioShow.prompt('请检查网络'));
+        DioShow.prompt('请检查网络');
       }
       return null;
     }
     
-    new Future.delayed(const Duration(milliseconds: 0), () => DioShow.show('加载中...'));
+    DioShow.show('加载中...',isShow: isShow);
 
-    _setRequestData(s, data);
+    try {
+      _setRequestData(s, data);
+    } catch (e) {
+      clearAssets();
+      DioShow.dismiss();
+      if (mianStateContext!=null) {
+        new StateNotification(mainState: MainState.login).dispatch(mianStateContext);
+      }else{
+        LogUtil().out('请设置mianStateContext');
+      }
+      LogUtil().out(e);
+      return null;
+    }
       
     Response<dynamic> response;
     try {
@@ -103,10 +119,11 @@ class DioUtil {
       Map data = response.data;
       LogUtil().out(data);
       if (data['code']==0) {
-        DioShow.successful('加载完成');
         if (data['data']!=null) {
           if (data['data'] is Map ) {
-            FileUtil.fromFileName(s).writeAsMap(data['data']);
+            if (isModel) {
+              FileUtil.fromFileName(s).writeAsMap(data['data']);
+            }
           }
           return data['data'];
         } else {
@@ -117,9 +134,12 @@ class DioUtil {
           DioShow.prompt(data['msg']);
           if (data['msg'] == '登录过期！') {
             token = '';
-            // clear();
-            // StaticValue.token = '';
-            // new RootNotification(rootState: RootState.login).dispatch(StaticValue.context);
+            clearAssets();
+            if (mianStateContext!=null) {
+              new StateNotification(mainState: MainState.login).dispatch(mianStateContext);
+            }else{
+              DioShow.prompt('请设置mianStateContext');
+            }
           }
         }
         return null;
@@ -141,13 +161,10 @@ class DioUtil {
   void _setRequestData(String s, dynamic data) {
     
     if (data is Map && data.length>5) {
-
       FileUtil.fromFileName('deliverService.insert').writeAsMap(data);
     }
-    
-
     if (token == '' && !(s=='accountService.login' || s=='accountService.sendVevifyCode')) {
-      LogUtil().out('token不能为空');
+      throw('token不能为空');
     } else {
       Map requestData;
       if (data is Map<String,File>) {

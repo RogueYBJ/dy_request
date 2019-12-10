@@ -24,11 +24,17 @@ class DioShow {
 
   static DioStatus _dioStatus;
 
-  static void show(String msg, {DioStatus dioStatus = DioStatus.normal}) {
-    _count += 1;
-    _msg = msg;
-    _dioStatus = dioStatus;
-    DioOverlay.addOverlayEntry(_loadingView());
+  static void show(
+    String msg, {
+    DioStatus dioStatus = DioStatus.normal,
+    bool isShow = true,
+  }) {
+    if (isShow) {
+      _count += 1;
+      _msg = msg;
+      _dioStatus = dioStatus;
+      DioOverlay.addOverlayEntry(_loadingView());
+    }
   }
 
   static void dismiss() {
@@ -66,10 +72,18 @@ class DioShow {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               new Container(
-                padding: EdgeInsets.all(20),
-                color: Color(0xFFFFFFFF),
-                child: new Center(
-                  child: new Text(_msg),
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color: Color(0xFFFFFFFF),
+                    borderRadius: BorderRadius.circular(10)),
+                child: new Column(
+                  children: <Widget>[
+                    _getCenterStatus(_dioStatus),
+                    new Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: new Text(_msg),
+                    )
+                  ],
                 ),
               )
             ],
@@ -77,5 +91,52 @@ class DioShow {
         ],
       ),
     );
+  }
+
+  ///加载状态
+  static Widget _getCenterStatus(DioStatus status) {
+    Widget view = new CircularProgressIndicator(
+      strokeWidth: 1,
+    ); //new CupertinoActivityIndicator(radius: ScreenUtil.instance.setWidth(40),);
+    switch (status) {
+      case DioStatus.successful:
+        view = new Container(
+          width: 50,
+          height: 50,
+          child: Image.asset(
+            'assets/third/prompt.png',
+            frameBuilder: (_, w, i, b) {
+              return i == null ? Icon(Icons.error) : w;
+            },
+          ),
+        );
+        break;
+      case DioStatus.prompt:
+        view = new Container(
+          width: 50,
+          height: 50,
+          child: Image.asset(
+            'assets/third/prompt.png',
+            frameBuilder: (_, w, i, b) {
+              return i == null ? Icon(Icons.error) : w;
+            },
+          ),
+        );
+        break;
+      case DioStatus.error:
+        view = new Container(
+          width: 50,
+          height: 50,
+          child: Image.asset(
+            'assets/third/prompt.png',
+            frameBuilder: (_, w, i, b) {
+              return i == null ? Icon(Icons.error) : w;
+            },
+          ),
+        );
+        break;
+      default:
+    }
+    return view;
   }
 }

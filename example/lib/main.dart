@@ -65,13 +65,12 @@ class _MyHomePageState<T> extends State<MyHomePage> {
 
   void login() {
     Map data = {
-      "mobile": "15179861454",
+      "mobile": "15988444941",
       "verifyCode": "888888",
       "userType": 2,
       "deviceToken": "",
       "deviceType": 1 //设备 1:iOS  2:Android
     };
-
     apiASLogin(data);
   }
 
@@ -82,7 +81,6 @@ class _MyHomePageState<T> extends State<MyHomePage> {
       }
     });
   }
-
 
   List<Widget> viewList = [];
 
@@ -99,56 +97,72 @@ class _MyHomePageState<T> extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: ListView(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          // mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            getView('发送验证码',action: () => apiASSendVevifyCode({'mobile':'15179861454', 'userType':2})),
-            getView('登录',action: () => login()),
-            getView('货主根据条件查看订单',action: () => apiDSSelectOwnerDeliverList()),
-            getView('获取常用发货位置',action: () => apiOASSelectList()),
-            getView('发货',action: () => apiASInsert()),
-            getView('双乾收货',action: () => apiDSTakeDelivery2()),
-          ],
+    return new NotificationListener<StateNotification>(
+      onNotification: (n){
+        if (n.mainState == MainState.login) {
+          print(MainState.login.toString());
+        }
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
         ),
+        body: Center(
+          // Center is a layout widget. It takes a single child and positions it
+          // in the middle of the parent.
+          child: ListView(
+            // Column is also a layout widget. It takes a list of children and
+            // arranges them vertically. By default, it sizes itself to fit its
+            // children horizontally, and tries to be as tall as its parent.
+            //
+            // Invoke "debug painting" (press "p" in the console, choose the
+            // "Toggle Debug Paint" action from the Flutter Inspector in Android
+            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+            // to see the wireframe for each widget.
+            //
+            // Column has various properties to control how it sizes itself and
+            // how it positions its children. Here we use mainAxisAlignment to
+            // center the children vertically; the main axis here is the vertical
+            // axis because Columns are vertical (the cross axis would be
+            // horizontal).
+            // mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              getView('发送验证码',
+                  action: () => apiASSendVevifyCode(
+                      {'mobile': '15988444941', 'userType': 2})),
+              getView('登录', action: () => login()),
+              getView('货主根据条件查看订单',
+                  action: () => apiDSSelectOwnerDeliverList()),
+              getView('获取常用发货位置', action: () => apiOASSelectList()),
+              getView('发货', action: () => apiASInsert()),
+              getView('双乾收货', action: () => apiDSTakeDelivery2()),
+              getView('清空token', action: () {
+                DioUtil.token = '';
+              }),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _incrementCounter,
+          tooltip: 'Increment',
+          child: Icon(Icons.add),
+        ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
-  Widget getView(String text,{Function action}){
+  Widget getView(String text, {Function action}) {
+    
     return new GestureDetector(
       onTap: action,
       child: new Container(

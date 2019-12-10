@@ -10,11 +10,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  dio: ^2.1.13
   connectivity: ^0.4.1
+  dio: ^2.1.13
+  shared_preferences: ^0.5.4+3
   file_model:
     git:
       url: https://github.com/RogueYBJ/file_model.git
+      ref: 1.0.0
 
 dev_dependencies:
   flutter_test:

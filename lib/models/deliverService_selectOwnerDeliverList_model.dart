@@ -1,6 +1,6 @@
 /*
  * Author: Bangjin Yu
- * CreateTime: 2019-11-30 19:53:35.395242
+ * CreateTime: 2019-12-10 21:06:30.968810
  * Email: 1227169416@qq.com
  * Address: 梦想小镇互联网村
  */
@@ -12,6 +12,9 @@ class DeliverServiceSelectOwnerDeliverListModel {
 	DeliverServiceSelectOwnerDeliverListModel({this.list,this.totalCount = 0,this.unAuthNum = 0,});
 	factory DeliverServiceSelectOwnerDeliverListModel.fromMap(Map data) {
 		return DeliverServiceSelectOwnerDeliverListModel(list:data['list'],totalCount:data['totalCount'],unAuthNum:data['unAuthNum'],);
+	}
+	Map toMap(){
+		return {'list':list,'totalCount':totalCount,'unAuthNum':unAuthNum,};
 	}
 	List<DeliverServiceSelectOwnerDeliverListListModel> getDeliverServiceSelectOwnerDeliverListListModel(){
 		List<DeliverServiceSelectOwnerDeliverListListModel> list = [];
