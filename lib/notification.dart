@@ -14,13 +14,11 @@ enum MainState {
   ///登录界面
   login,
   ///主页
-  root,
-  ///订单页面
-  deliver
+  tabbar
 }
 
 ///状态通知
-class StateNotification extends Notification {
-  StateNotification({Key key,this.mainState});
+class MainNotification extends Notification {
+  MainNotification({Key key,this.mainState});
   MainState mainState;
 }

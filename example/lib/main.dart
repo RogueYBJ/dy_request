@@ -64,22 +64,22 @@ class _MyHomePageState<T> extends State<MyHomePage> {
   }
 
   void login() {
-    Map data = {
-      "mobile": "15988444941",
-      "verifyCode": "888888",
-      "userType": 2,
-      "deviceToken": "",
-      "deviceType": 1 //设备 1:iOS  2:Android
-    };
-    apiASLogin(data);
+    // Map data = {
+    //   "mobile": "15988444941",
+    //   "verifyCode": "888888",
+    //   "userType": 2,
+    //   "deviceToken": "",
+    //   "deviceType": 1 //设备 1:iOS  2:Android
+    // };
+    // apiASLogin(data);
   }
 
   void getList() {
-    apiDSSelectOwnerDeliverList().then((list) {
-      for (var model in list) {
-        print(model.deliverId);
-      }
-    });
+    // apiDSSelectOwnerDeliverList().then((list) {
+    //   for (var model in list) {
+    //     print(model.deliverId);
+    //   }
+    // });
   }
 
   List<Widget> viewList = [];
@@ -104,7 +104,7 @@ class _MyHomePageState<T> extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return new NotificationListener<StateNotification>(
+    return new NotificationListener<MainNotification>(
       onNotification: (n){
         if (n.mainState == MainState.login) {
           print(MainState.login.toString());
@@ -137,18 +137,18 @@ class _MyHomePageState<T> extends State<MyHomePage> {
             // horizontal).
             // mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              getView('发送验证码',
-                  action: () => apiASSendVevifyCode(
-                      {'mobile': '15988444941', 'userType': 2})),
-              getView('登录', action: () => login()),
-              getView('货主根据条件查看订单',
-                  action: () => apiDSSelectOwnerDeliverList()),
-              getView('获取常用发货位置', action: () => apiOASSelectList()),
-              getView('发货', action: () => apiASInsert()),
-              getView('双乾收货', action: () => apiDSTakeDelivery2()),
-              getView('清空token', action: () {
-                DioUtil.token = '';
-              }),
+              // getView('发送验证码',
+              //     action: () => apiASSendVevifyCode(
+              //         {'mobile': '15988444941', 'userType': 2})),
+              // getView('登录', action: () => login()),
+              // getView('货主根据条件查看订单',
+              //     action: () => apiDSSelectOwnerDeliverList()),
+              // getView('获取常用发货位置', action: () => apiOASSelectList()),
+              // getView('发货', action: () => apiASInsert()),
+              // getView('双乾收货', action: () => apiDSTakeDelivery2()),
+              // getView('清空token', action: () {
+              //   DioUtil.token = '';
+              // }),
             ],
           ),
         ),
