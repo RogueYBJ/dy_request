@@ -23,7 +23,7 @@ class DioUtil {
 
 //  final String httpURL = 'http://122.112.142.159/api'; //线上数据库
 
-  final String httpURL = 'http://49.235.104.80:8088/api'; //测试数据库
+  static String httpURL = 'http://49.235.104.80:8088/api'; //测试数据库
 
   /// 实例类
   static DioUtil _instance;

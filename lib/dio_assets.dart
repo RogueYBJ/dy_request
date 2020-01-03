@@ -35,7 +35,7 @@ setAssetsDevice(String deviceToken) async {
 Future<bool> getAssetsLogin() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool login = prefs.getBool('login');
-  return await login == null ? false : login;
+  return login == null ? false : login;
 }
 
 ///获取Phone
