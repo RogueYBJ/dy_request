@@ -1,6 +1,6 @@
 //import 'package:example/model/accountService_selectOwnerDeliverList_list_model.dart';
 //import 'package:example/model/accountService_selectOwnerDeliverList_model.dart';
-import 'package:file_model/file_model.dart';
+
 import 'package:flutter/material.dart';
 
 import 'package:dy_request/dy_request.dart';
@@ -56,25 +56,31 @@ class _MyHomePageState<T> extends State<MyHomePage> {
     // TODO: implement initState
     super.initState();
 
-    DioUtil.result = ConnectivityResult.wifi;
+    // DioUtil.result = ConnectivityResult.wifi;
 
-    OverlayCreate.context = context;
-
-    login();
+    // OverlayCreate.context = context;
   }
 
   void login() {
-    // Map data = {
-    //   "mobile": "15988444941",
-    //   "verifyCode": "888888",
-    //   "userType": 2,
-    //   "deviceToken": "",
-    //   "deviceType": 1 //设备 1:iOS  2:Android
-    // };
+    Map data = {
+      "mobile": "15988444941",
+      "verifyCode": "888888",
+      // "userType": 2,
+      // "deviceToken": "",
+      // "deviceType": 1 //设备 1:iOS  2:Android
+    };
     // apiASLogin(data);
+    DioUtil.instance().post('user/login', data).then((response){
+      print(response?.data);
+      DioUtil.token = response?.data;
+    });
   }
 
-  void getList() {
+  void banner() {
+    DioUtil.instance().post('activity/banner', {}).then((response){
+      print(response?.data);
+      // DioUtil.token = response?.data;
+    });
     // apiDSSelectOwnerDeliverList().then((list) {
     //   for (var model in list) {
     //     print(model.deliverId);
@@ -140,7 +146,8 @@ class _MyHomePageState<T> extends State<MyHomePage> {
               // getView('发送验证码',
               //     action: () => apiASSendVevifyCode(
               //         {'mobile': '15988444941', 'userType': 2})),
-              // getView('登录', action: () => login()),
+              getView('登录', action: () => login()),
+              getView('banner', action: () => banner()),
               // getView('货主根据条件查看订单',
               //     action: () => apiDSSelectOwnerDeliverList()),
               // getView('获取常用发货位置', action: () => apiOASSelectList()),

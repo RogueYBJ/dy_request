@@ -40,7 +40,7 @@ class DioShow {
   static void dismiss() {
     _count -= 1;
     if (_count <= 0) {
-      DioOverlay.clean();
+      DioOverlay?.clean();
     }
   }
 
