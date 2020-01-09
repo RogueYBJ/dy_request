@@ -38,7 +38,7 @@ class DioUtil<T> {
   static ConnectivityResult result;
 
   /// 请求完成的方法
-  static Function(ResponseData) responseAction;
+  static void Function(ResponseData) responseAction;
 
   Dio _dio;
 
@@ -46,7 +46,7 @@ class DioUtil<T> {
 
   int _receiveTimeout = 7000;
 
-  RequestData _requestData;
+  static RequestData _requestData;
 
   DioUtil();
 
@@ -70,7 +70,6 @@ class DioUtil<T> {
       _dio = Dio();
       _dio.options = BaseOptions(
         headers: {
-          'atk': token,
           'device': Platform.isIOS ? 'iOS' : 'Android',
           'version': version,
         },
@@ -106,7 +105,7 @@ class DioUtil<T> {
     }
 
     DioShow.show('加载中...', isShow: isShow);
-
+    headers.addAll({'atk': token,});
     _requestData = RequestData.fromMap(
         {'url': url, 'body': data, 'options': Options(headers: headers)});
 
@@ -130,11 +129,11 @@ class DioUtil<T> {
     }
     DioShow.dismiss();
 
-    if (response?.statusCode == 200) {
-      ResponseData responseData = ResponseData.fromMap(response?.data);
-      LogUtil().out(responseData);
-      if (responseData.code != 0) {
-        DioShow.prompt(responseData.msg);
+    if (response?.statusCode ?? 101 == 200) {
+      ResponseData responseData = ResponseData.fromMap(response?.data??{});
+      LogUtil().out(responseData?.data ?? '没有数据');
+      if (responseData?.code ?? 101 != 0) {
+        DioShow.prompt(responseData?.msg ?? '出错');
       }
       if (responseAction!=null) {
         responseAction(responseData);
@@ -280,13 +279,13 @@ class ResponseData<T> {
   final int code;
   final T data;
 
-  ResponseData({this.msg = '', this.code = 0, this.data});
+  ResponseData({this.msg, this.code, this.data});
 
   factory ResponseData.fromMap(Map data) {
     return ResponseData(
-      msg: data['msg'],
-      code: data['code'],
-      data: data['data'],
+      msg: data['msg'] ?? '',
+      code: data['code'] ?? 101,
+      data: data['data'] ?? {},
     );
   }
 }
