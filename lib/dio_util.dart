@@ -5,7 +5,6 @@
  * @Date 2019-11-12 15:35:59 Tuesday
  */
 
-
 import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
@@ -16,7 +15,6 @@ import 'package:flutter/cupertino.dart';
 import 'log_util.dart';
 
 class DioUtil<T> {
-
   static BuildContext mianStateContext;
 
 //  final String httpURL = 'http://122.112.142.159/api'; //线上数据库
@@ -105,7 +103,12 @@ class DioUtil<T> {
     }
 
     DioShow.show('加载中...', isShow: isShow);
-    headers.addAll({'atk': token,});
+    if (headers != null) {
+      headers.addAll({'atk': token});
+    } else {
+      headers = {'atk': token};
+    }
+
     _requestData = RequestData.fromMap(
         {'url': url, 'body': data, 'options': Options(headers: headers)});
 
@@ -130,12 +133,12 @@ class DioUtil<T> {
     DioShow.dismiss();
 
     if (response?.statusCode ?? 101 == 200) {
-      ResponseData responseData = ResponseData.fromMap(response?.data??{});
+      ResponseData responseData = ResponseData.fromMap(response?.data ?? {});
       LogUtil().out(responseData?.data ?? '没有数据');
       if (responseData?.code ?? 101 != 0) {
         DioShow.prompt(responseData?.msg ?? '出错');
       }
-      if (responseAction!=null) {
+      if (responseAction != null) {
         responseAction(responseData);
       }
       return responseData;
