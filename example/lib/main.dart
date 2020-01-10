@@ -56,7 +56,7 @@ class _MyHomePageState<T> extends State<MyHomePage> {
     // TODO: implement initState
     super.initState();
 
-    // DioUtil.result = ConnectivityResult.wifi;
+    DioUtil.result = ConnectivityResult.wifi;
 
     // OverlayCreate.context = context;
   }

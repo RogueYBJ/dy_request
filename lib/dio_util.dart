@@ -87,7 +87,7 @@ class DioUtil<T> {
   Future<ResponseData<T>> post(
     String url,
     dynamic data, {
-    Map headers,
+    Map<String, dynamic> headerMap,
     bool isShow = false,
     String msg = '加载中...',
     bool isModel = false,
@@ -103,14 +103,13 @@ class DioUtil<T> {
     }
 
     DioShow.show('加载中...', isShow: isShow);
-    if (headers != null) {
-      headers.addAll({'atk': token});
-    } else {
-      headers = {'atk': token};
+    Map<String, dynamic> headersMap = {'atk': token};
+    if (headerMap != null) {
+      headersMap.addAll(headerMap);
     }
 
     _requestData = RequestData.fromMap(
-        {'url': url, 'body': data, 'options': Options(headers: headers)});
+        {'url': url, 'body': data, 'options': Options(headers: headersMap)});
 
     Response<dynamic> response;
     try {
