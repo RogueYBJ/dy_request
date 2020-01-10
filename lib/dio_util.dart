@@ -131,10 +131,10 @@ class DioUtil<T> {
     }
     DioShow.dismiss();
 
-    if (response?.statusCode ?? 101 == 200) {
+    if ((response?.statusCode ?? 101) == 200) {
       ResponseData responseData = ResponseData.fromMap(response?.data ?? {});
       LogUtil().out(responseData?.data ?? '没有数据');
-      if (responseData?.code ?? 101 != 0) {
+      if ((responseData?.code ?? 101) != 0) {
         DioShow.prompt(responseData?.msg ?? '出错');
       }
       if (responseAction != null) {
