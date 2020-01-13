@@ -133,16 +133,18 @@ class DioUtil<T> {
 
     if ((response?.statusCode ?? 101) == 200) {
       ResponseData responseData = ResponseData.fromMap(response?.data ?? {});
-      LogUtil().out(responseData?.data ?? '没有数据');
-      if ((responseData?.code ?? 101) != 0) {
-        DioShow.prompt(responseData?.msg ?? '出错');
-      }
+      LogUtil().out(responseData?.data ?? '没有数据！');
       if (responseAction != null) {
         responseAction(responseData);
       }
-      return responseData;
+      if ((responseData?.code ?? 101) == 0) {
+        return responseData;
+      }else{
+        DioShow.prompt(responseData?.msg ?? '没有错误信息！');
+        return null;
+      }
     } else {
-      DioShow.error('网络错误');
+      DioShow.error('网络错误！');
       return null;
     }
   }

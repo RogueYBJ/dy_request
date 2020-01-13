@@ -17,6 +17,11 @@ enum DioStatus {
 }
 
 class DioShow {
+
+  static String successfulImg = '';
+  static String promptImg = '';
+  static String errorImg = '';
+
   ///计数引用
   static int _count = 0;
 
@@ -103,8 +108,8 @@ class DioShow {
         view = new Container(
           width: 50,
           height: 50,
-          child: Image.asset(
-            'assets/third/prompt.png',
+          child: successfulImg==''? null : Image.asset(
+            successfulImg,
             frameBuilder: (_, w, i, b) {
               return i == null ? Icon(Icons.error) : w;
             },
@@ -115,8 +120,8 @@ class DioShow {
         view = new Container(
           width: 50,
           height: 50,
-          child: Image.asset(
-            'assets/third/prompt.png',
+          child: promptImg==''? null : Image.asset(
+            promptImg,
             frameBuilder: (_, w, i, b) {
               return i == null ? Icon(Icons.error) : w;
             },
@@ -127,8 +132,8 @@ class DioShow {
         view = new Container(
           width: 50,
           height: 50,
-          child: Image.asset(
-            'assets/third/prompt.png',
+          child: errorImg==''? null :  Image.asset(
+            errorImg,
             frameBuilder: (_, w, i, b) {
               return i == null ? Icon(Icons.error) : w;
             },
